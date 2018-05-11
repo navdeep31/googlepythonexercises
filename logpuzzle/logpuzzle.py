@@ -33,8 +33,16 @@ def read_urls(filename):
     match = re.search(r'GET (\S*puzzle\S*) HTTP', line)
     if match and (server_name + match.group(1)) not in urls:
       urls.append(server_name + match.group(1))
-  urls.sort()
+  for url in urls:
+    match = re.search(r'\S*-(\w+)-(\w+).jpg', url)
+    if match:
+      urls = sorted(urls,key=sortUrl)
+    else:
+	  urls.sort()
   return urls
+
+def sortUrl(key):
+  return re.search(r'\S*-(\w+)-(\w+).jpg',key).group(2)
 
 
 def download_images(img_urls, dest_dir):
@@ -54,8 +62,8 @@ def download_images(img_urls, dest_dir):
 
   for img_url in img_urls:
     print "retrieving img"+ str(i) + " from " + img_url
-    print os.path.dirname(img_url)
-    print os.path.join(dest_dir,"img"+str(i))
+    #print os.path.dirname(img_url)
+    #print os.path.join(dest_dir,"img"+str(i))
     urllib.urlretrieve('http://'+img_url, os.path.join(dest_dir,"img"+str(i)))
     html_file.write('<img src="img'+str(i)+'">')
     i+=1
